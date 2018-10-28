@@ -8,10 +8,16 @@ const { Rectangle } = require('../lib/tool');
 
 describe('Yolo V2 tests', function () {
     let config;
+    let imageList;
 
     before(function () {
         // The path for require must be relative to this file.
         config = require('./data/yolo_v2_voc0712.json');
+
+        return loadInputImages()
+        .then((images) => {
+            imageList = images;
+        });
     });
 
     //after(function () {});
@@ -59,54 +65,77 @@ describe('Yolo V2 tests', function () {
 
         it('dog', function () {
             const iBuf = model.inputBuffer;
-            return loadInputImages()
-            .then((images) => {
-                const image = images[0];
-                const originalShape = [image.bitmap.height, image.bitmap.width];
-                // Crop the input image to a square shape.
-                //cropToSquare(image);
+            const image = imageList[0]; // dog.jpg
+            const originalShape = [image.bitmap.height, image.bitmap.width];
 
-                // Resize it to this._config.inSize x this._config.inSize.
-                image.resize(config.insize, config.insize);
+            // Resize it to this._config.inSize x this._config.inSize.
+            assert.equal(model.inSize, config.insize);
+            image.resize(model.inSize, model.inSize);
 
-                // Now, copy the image data into to the input buffer in NCHW format.
-                image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
-                    for (let c = 0; c < 3; ++c) {
-                        let val = image.bitmap.data[idx + c];
-                        val = val / 255.0;
-                        iBuf.set(c, y, x, val);
-                    }
-                });
+            // Now, copy the image data into to the input buffer in NCHW format.
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
+                for (let c = 0; c < 3; ++c) {
+                    let val = image.bitmap.data[idx + c];
+                    val = val / 255.0;
+                    iBuf.set(c, y, x, val);
+                }
+            });
 
-                return model.run(originalShape)
-                .then((boxes) => {
-                    assert.equal(boxes.length, 3);
-                    assert.equal(boxes[0].classId, 11);
-                    assert.equal(boxes[1].classId, 1);
-                    assert.equal(boxes[2].classId, 6);
-                    const expRecs = [
-                        new Rectangle(105, 198, 233, 342),
-                        new Rectangle(86, 113, 474, 279),
-                        new Rectangle(471, 73, 222, 102)
-                    ]
-                    const expScores = [ 0.8, 0.79, 0.71 ]
-                    boxes.forEach((box, i) => {
-                        assert.ok(box.score >= expScores[i], 'score is too low');
-                        assert.deepEqual(box.rec, expRecs[i]);
-                    });
-
-                    // Try decode again with direct docode() method call.
-                    boxes = model.decode(model.outputBuffer, originalShape);
-                    assert.equal(boxes.length, 3);
-                    assert.equal(boxes[0].classId, 11);
-                    assert.equal(boxes[1].classId, 1);
-                    assert.equal(boxes[2].classId, 6);
-                    boxes.forEach((box, i) => {
-                        assert.ok(box.score >= expScores[i], 'score is too low');
-                        assert.deepEqual(box.rec, expRecs[i]);
-                    });
-                });
+            return model.run(originalShape, {
+                scoreThresh: 0.7
             })
+            .then((boxes) => {
+                assert.equal(boxes.length, 3);
+                assert.equal(boxes[0].classId, 11);
+                assert.equal(boxes[1].classId, 1);
+                assert.equal(boxes[2].classId, 6);
+                const expRecs = [
+                    new Rectangle(105, 198, 233, 342),
+                    new Rectangle(86, 113, 474, 279),
+                    new Rectangle(471, 73, 222, 102)
+                ]
+                const expScores = [ 0.8, 0.79, 0.71 ]
+                boxes.forEach((box, i) => {
+                    assert.ok(box.score >= expScores[i], 'score is too low');
+                    assert.deepEqual(box.rec, expRecs[i]);
+                });
+
+                // Try decode again with direct docode() method call.
+                boxes = model.decode(model.outputBuffer, originalShape, {
+                    scoreThresh: 0.7
+                });
+                assert.equal(boxes.length, 3);
+                assert.equal(boxes[0].classId, 11);
+                assert.equal(boxes[1].classId, 1);
+                assert.equal(boxes[2].classId, 6);
+                boxes.forEach((box, i) => {
+                    assert.ok(box.score >= expScores[i], 'score is too low');
+                    assert.deepEqual(box.rec, expRecs[i]);
+                });
+            });
+        });
+
+        it.skip('sheep', function () {
+            const iBuf = model.inputBuffer;
+            const image = imageList[1]; // dog.jpg
+            const originalShape = [image.bitmap.height, image.bitmap.width];
+
+            // Resize it to this._config.inSize x this._config.inSize.
+            image.resize(config.insize, config.insize);
+
+            // Now, copy the image data into to the input buffer in NCHW format.
+            image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
+                for (let c = 0; c < 3; ++c) {
+                    let val = image.bitmap.data[idx + c];
+                    val = val / 255.0;
+                    iBuf.set(c, y, x, val);
+                }
+            });
+
+            return model.run(originalShape, {
+                scoreThresh: 0.7,
+                overlapThresh: 0.7
+            });
         });
     });
 });

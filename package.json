@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Object classification using Yolo powered by Menoh.",
   "main": "index.js",
+  "bin": {
+    "menoh-yolo": "./bin/cli.js"
+  },
   "scripts": {
     "test": "mocha",
     "cover": "istanbul cover _mocha"
@@ -24,15 +27,18 @@
   },
   "homepage": "https://github.com/enobufs/node-menoh-yolo#readme",
   "dependencies": {
+    "canvas": "~1.6.13",
+    "commander": "^2.19.0",
     "dtype": "^2.0.0",
+    "jimp": "^0.5.6",
     "menoh": "^1.2.1",
     "ndarray": "^1.0.18",
     "ndarray-unpack": "^1.0.0",
-    "numjs": "^0.16.0"
+    "numjs": "^0.16.0",
+    "opn": "^5.4.0"
   },
   "devDependencies": {
     "istanbul": "^0.4.5",
-    "jimp": "^0.5.6",
     "mocha": "^5.2.0"
   }
 }
