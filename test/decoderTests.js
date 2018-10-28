@@ -29,9 +29,11 @@ describe('Docoder tests', function () {
 
         it('decode success', function () {
             const orgShape = [576, 768];
-            const scoreThresh = 0.7;
-            const overlapThresh = 0.7;
-            const boxes = dec.decode(result, scoreThresh, overlapThresh, orgShape)
+            const option = {
+                scoreThresh: 0.7,
+                overlapThresh: 0.7
+            };
+            const boxes = dec.decode(result, orgShape, option)
             //console.log('Final:\n', boxes);
 
             assert.equal(boxes.length, 3);

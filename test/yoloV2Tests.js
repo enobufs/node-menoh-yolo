@@ -15,6 +15,32 @@ describe('Yolo V2 tests', function () {
     });
 
     //after(function () {});
+    describe('Class tests', function () {
+        it('config default values', function () {
+            const model = yolo.create();
+            assert.deepEqual(model._config, {
+                inputName: 'Input_0',
+                backendName: 'mkldnn',
+                outputName: 'Conv_23',
+                inSize: 416,
+                grid: 13,
+                nBoxes: 5,
+                anchors: [
+                    [1.73145, 1.3221],
+                    [4.00944, 3.19275],
+                    [8.09892, 5.05587],
+                    [4.84053, 9.47112],
+                    [10.0071, 11.2364]
+                ],
+                labels: [
+                    "aeroplane", "bicycle", "bird", "boat", "bottle",
+                    "bus", "car", "cat", "chair", "cow",
+                    "diningtable", "dog", "horse", "motorbike", "person",
+                    "pottedplant", "sheep", "sofa", "train", "tvmonitor"
+                ]
+            });
+        });
+    });
 
     describe('Instance tests', function () {
         let model;
@@ -31,53 +57,56 @@ describe('Yolo V2 tests', function () {
             return model.build(onnxPath);
         });
 
-        it('test', function () {
+        it('dog', function () {
             const iBuf = model.inputBuffer;
-            const oBuf = model.outputBuffer;
             return loadInputImages()
             .then((images) => {
-                images.forEach((image, batchIdx) => {
-                    // Crop the input image to a square shape.
-                    //cropToSquare(image);
+                const image = images[0];
+                const originalShape = [image.bitmap.height, image.bitmap.width];
+                // Crop the input image to a square shape.
+                //cropToSquare(image);
 
-                    // Resize it to this._config.inSize x this._config.inSize.
-                    image.resize(config.insize, config.insize);
+                // Resize it to this._config.inSize x this._config.inSize.
+                image.resize(config.insize, config.insize);
 
-                    // Now, copy the image data into to the input buffer in NCHW format.
-                    image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
-                        for (let c = 0; c < 3; ++c) {
-                            let val = image.bitmap.data[idx + c];
-                            val = val / 255.0;
-                            iBuf.set(batchIdx, c, y, x, val);
-                        }
+                // Now, copy the image data into to the input buffer in NCHW format.
+                image.scan(0, 0, image.bitmap.width, image.bitmap.height, (x, y, idx) => {
+                    for (let c = 0; c < 3; ++c) {
+                        let val = image.bitmap.data[idx + c];
+                        val = val / 255.0;
+                        iBuf.set(c, y, x, val);
+                    }
+                });
+
+                return model.run(originalShape)
+                .then((boxes) => {
+                    assert.equal(boxes.length, 3);
+                    assert.equal(boxes[0].classId, 11);
+                    assert.equal(boxes[1].classId, 1);
+                    assert.equal(boxes[2].classId, 6);
+                    const expRecs = [
+                        new Rectangle(105, 198, 233, 342),
+                        new Rectangle(86, 113, 474, 279),
+                        new Rectangle(471, 73, 222, 102)
+                    ]
+                    const expScores = [ 0.8, 0.79, 0.71 ]
+                    boxes.forEach((box, i) => {
+                        assert.ok(box.score >= expScores[i], 'score is too low');
+                        assert.deepEqual(box.rec, expRecs[i]);
+                    });
+
+                    // Try decode again with direct docode() method call.
+                    boxes = model.decode(model.outputBuffer, originalShape);
+                    assert.equal(boxes.length, 3);
+                    assert.equal(boxes[0].classId, 11);
+                    assert.equal(boxes[1].classId, 1);
+                    assert.equal(boxes[2].classId, 6);
+                    boxes.forEach((box, i) => {
+                        assert.ok(box.score >= expScores[i], 'score is too low');
+                        assert.deepEqual(box.rec, expRecs[i]);
                     });
                 });
-
-                return model.run();
             })
-            .then(() => {
-                const result = oBuf.pick(0);
-                const boxes = model.decode(result, {
-                    scoreThresh: 0.7,
-                    overlapThresh: 0.7,
-                    originalShape: [576, 768]
-                });
-
-                assert.equal(boxes.length, 3);
-                assert.equal(boxes[0].classId, 11);
-                assert.equal(boxes[1].classId, 1);
-                assert.equal(boxes[2].classId, 6);
-                const expRecs = [
-                    new Rectangle(105, 198, 233, 342),
-                    new Rectangle(86, 113, 474, 279),
-                    new Rectangle(471, 73, 222, 102)
-                ]
-                const expScores = [ 0.8, 0.79, 0.71 ]
-                boxes.forEach((box, i) => {
-                    assert.ok(box.score >= expScores[i], 'score is too low');
-                    assert.deepEqual(box.rec, expRecs[i]);
-                });
-            });
         });
     });
 });
