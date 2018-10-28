@@ -8,24 +8,16 @@ describe('Tool tests', function () {
         assert.equal(tool.sigmoid(0), 0.5);
     });
 
-    it('rectangle axis value swap', function () {
-        const rec = new tool.Rectangle(4, 5, 2, 3);
-        assert.equal(rec.x0, 2);
-        assert.equal(rec.y0, 3);
-        assert.equal(rec.x1, 4);
-        assert.equal(rec.y1, 5);
-    });
-
     it('overlap detection - no overlap (x-axis)', function () {
         const rec1 = new tool.Rectangle(0, 0, 10, 10);
-        const rec2 = new tool.Rectangle(10, 0, 20, 10);
+        const rec2 = new tool.Rectangle(10, 0, 10, 10);
         const overlap = tool.overlapRectangle(rec1, rec2);
         assert.strictEqual(overlap, null, 'should have no overlap');
     });
 
     it('overlap detection - no overlap (y-axis)', function () {
         const rec1 = new tool.Rectangle(0, 0, 10, 10);
-        const rec2 = new tool.Rectangle(0, 10, 10, 20);
+        const rec2 = new tool.Rectangle(0, 10, 10, 10);
         const overlap = tool.overlapRectangle(rec1, rec2);
         assert.strictEqual(overlap, null, 'should have no overlap');
     });
@@ -38,7 +30,7 @@ describe('Tool tests', function () {
                 classId: 1,
                 score: 0.8
             }, {
-                rec: new tool.Rectangle(10, 0, 20, 10),
+                rec: new tool.Rectangle(10, 0, 0, 10),
                 id: 2,
                 classId: 1,
                 score: 0.8
@@ -71,7 +63,7 @@ describe('Tool tests', function () {
                 classId: 1,
                 score: 0.8
             }, {
-                rec: new tool.Rectangle(70, 70, 101, 101),
+                rec: new tool.Rectangle(70, 70, 31, 31),
                 id: 2,
                 classId: 1,
                 score: 0.8
@@ -105,7 +97,7 @@ describe('Tool tests', function () {
                 classId: 1,
                 score: 0.8
             }, {
-                rec: new tool.Rectangle(90, 90, 190, 190),
+                rec: new tool.Rectangle(90, 90, 100, 100),
                 id: 2,
                 classId: 1,
                 score: 0.9

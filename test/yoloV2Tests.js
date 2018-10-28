@@ -68,13 +68,14 @@ describe('Yolo V2 tests', function () {
                 assert.equal(boxes[1].classId, 1);
                 assert.equal(boxes[2].classId, 6);
                 const expRecs = [
-                    new Rectangle(221, 370, 455, 713),
-                    new Rectangle(323, 253, 797, 532),
-                    new Rectangle(583, 124, 805, 227)
+                    new Rectangle(105, 198, 233, 342),
+                    new Rectangle(86, 113, 474, 279),
+                    new Rectangle(471, 73, 222, 102)
                 ]
                 const expScores = [ 0.8, 0.79, 0.71 ]
                 boxes.forEach((box, i) => {
                     assert.ok(box.score >= expScores[i], 'score is too low');
+                    assert.deepEqual(box.rec, expRecs[i]);
                 });
             });
         });
