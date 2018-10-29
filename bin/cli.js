@@ -39,12 +39,13 @@ function readImageFile(fileName) {
  
 program
     .usage('[options]')
-    .version(yolo.version, '-v, --version')
-    .option('-i, --input <pathname>', 'Input file path.)', resolve)
-    .option('-o, --output <pathname>', 'Output file path.)', resolve)
-    .option('-s, --score <number>', 'Score threshold (0, 1.0] (defaults to 0.4)', parseFloat)
-    .option('-x, --overlap <number>', 'Overlap threshold (0, 1.0] (defaults to 0.7)', parseFloat)
-    .option('-b, --browse', 'Open output image with default viewer.')
+    .version(yolo.version)
+    .option('-i, --input <pathname>', 'input file path', resolve)
+    .option('-o, --output <pathname>', 'output file path', resolve)
+    .option('-s, --score <number>', 'score threshold (0, 1.0] (defaults to 0.4)', parseFloat)
+    .option('-x, --overlap <number>', 'overlap threshold (0, 1.0] (defaults to 0.7)', parseFloat)
+    .option('-b, --browse', 'open output image with default viewer')
+    .option('-v, --verbose', 'print more information on TTY')
     .parse(process.argv);
 
 
@@ -85,11 +86,17 @@ mkdirp(fileStore)
 .then((buf) => {
     return jimp.read(buf)
     .then((image) => {
+        const ts = [];
         const model = yolo.create();
+
+        ts.push(Date.now()); // ts[0]
+
         model.build(onnxPath)
         .then(() => {
             const iBuf = model.inputBuffer;
             const originalShape = [image.bitmap.height, image.bitmap.width];
+
+            ts.push(Date.now()); // ts[1]
 
             // Resize it to (model.inSize x model.inSize).
             image.resize(model.inSize, model.inSize);
@@ -111,12 +118,25 @@ mkdirp(fileStore)
                 runOpts.overlapThresh = program.overlap;
             }
 
+            ts.push(Date.now()); // ts[2]
+
             return model.run(originalShape, runOpts)
         })
         .then((boxes) => {
+            ts.push(Date.now()); // ts[3]
+
             return drawBoxes(program.output, boxes, buf);
         })
         .then(() => {
+            ts.push(Date.now()); // ts[4]
+
+            if (program.verbose) {
+                console.log('ONNX loading & build : %d [msec]', ts[1] - ts[0]);
+                console.log('Image resize & copy  : %d [msec]', ts[2] - ts[1]);
+                console.log('Inference            : %d [msec]', ts[3] - ts[2]);
+                console.log('Sort results & save  : %d [msec]', ts[4] - ts[3]);
+            }
+
             if (program.browse) {
                 require('opn')(program.output, { wait: false });
             }
