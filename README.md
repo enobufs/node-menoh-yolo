@@ -9,6 +9,9 @@ The modules supports both command line interface and API.
 npm install -g menoh-yolo
 ```
 
+> When you use the CLI for the first time, it automatically downloads ONNX file and a
+> configuration file into $HOME/.menoh-yolo/.
+
 ## Usage
 
 ```
