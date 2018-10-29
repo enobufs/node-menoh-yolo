@@ -4,17 +4,25 @@ const Decoder = require('../lib/decoder');
 const assert = require('assert');
 const helper = require('./helper');
 const { Rectangle, overlapRectangle } = require('../lib/tool');
+const ndarray = require('ndarray');
+const sinon = require('sinon');
+
 
 describe('Docoder tests', function () {
     let config;
     let dec;
+    let sandbox;
+    
 
     before(function () {
         // The path for require must be relative to this file.
         config = require('./data/yolo_v2_voc0712.json');
+        sandbox = sinon.sandbox.create();
     });
 
-    //after(function () {});
+    afterEach(function () {
+        sandbox.restore();
+    });
 
     describe('Instance tests', function () {
         let result;
@@ -25,6 +33,13 @@ describe('Docoder tests', function () {
 
         beforeEach(function () {
             dec = new Decoder(13, 5, 20, config.anchors);
+        });
+
+        it('decode default option', function () {
+            const spy = sandbox.spy(dec, '_getBoxes');
+            const dummy = ndarray(new Float32Array(13*13*125), [13, 13, 125]);
+            dec.decode(dummy, [576, 768]);
+            assert.strictEqual(spy.args[0][1], 0.4);
         });
 
         it('decode success', function () {

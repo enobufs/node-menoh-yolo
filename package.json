@@ -7,6 +7,7 @@
     "menoh-yolo": "./bin/cli.js"
   },
   "scripts": {
+    "pretest": "./script/download.sh",
     "test": "mocha",
     "cover": "istanbul cover _mocha"
   },
@@ -37,7 +38,8 @@
     "ndarray": "^1.0.18",
     "ndarray-unpack": "^1.0.0",
     "numjs": "^0.16.0",
-    "opn": "^5.4.0"
+    "opn": "^5.4.0",
+    "sinon": "^7.1.0"
   },
   "devDependencies": {
     "istanbul": "^0.4.5",

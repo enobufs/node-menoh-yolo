@@ -3,7 +3,7 @@
 const yolo = require('..');
 const { INPUT_IMAGE_LIST, loadInputImages } = require('./helper');
 const assert = require('assert');
-const onnxPath = './test/data/YOLOv2_2018_09_27.onnx';
+const onnxPath = './test/data/yolo_v2_voc0712.onnx';
 const { Rectangle } = require('../lib/tool');
 
 describe('Yolo V2 tests', function () {
