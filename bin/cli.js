@@ -42,7 +42,7 @@ program
     .version(yolo.version, '-v, --version')
     .option('-i, --input <pathname>', 'Input file path.)', resolve)
     .option('-o, --output <pathname>', 'Output file path.)', resolve)
-    .option('-s, --score <number>', 'Score threshold (0, 1.0] (defaults to 0.7)', parseFloat)
+    .option('-s, --score <number>', 'Score threshold (0, 1.0] (defaults to 0.4)', parseFloat)
     .option('-x, --overlap <number>', 'Overlap threshold (0, 1.0] (defaults to 0.7)', parseFloat)
     .option('-b, --browse', 'Open output image with default viewer.')
     .parse(process.argv);

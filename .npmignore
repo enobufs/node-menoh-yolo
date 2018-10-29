@@ -16,3 +16,6 @@ script
 #editor settings
 .idea
 .editorconfig
+
+#document
+doc
