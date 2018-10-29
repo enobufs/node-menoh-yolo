@@ -9,8 +9,17 @@ const fs = require('fs');
 const jimp = require('jimp');
 const yolo = require(path.join(__dirname, '..'));
 const drawBoxes = require('./drawBoxes');
+const os = require('os');
+const download = require('download');
 
-const onnxPath = path.join(__dirname, '../test/data/YOLOv2_2018_09_27.onnx')
+const fileStore = path.join(os.homedir(), '.menoh-yolo');
+const onnxPath = path.join(fileStore, 'yolo_v2_voc0712.onnx')
+const jsonPath = path.join(fileStore, 'yolo_v2_voc0712.json')
+const mkdirp = util.promisify(require('mkdirp'));
+const access = util.promisify(fs.access);
+
+const onnxUrl = 'https://github.com/Hakuyume/menoh-yolo/releases/download/assets/yolo_v2_voc0712.onnx';
+const jsonUrl = 'https://github.com/Hakuyume/menoh-yolo/releases/download/assets/yolo_v2_voc0712.json';
 
 function resolve(ipath) {
     return path.resolve(process.cwd(), ipath);
@@ -29,7 +38,7 @@ function readImageFile(fileName) {
 }
  
 program
-    .usage('[options] <url>')
+    .usage('[options]')
     .version(yolo.version, '-v, --version')
     .option('-i, --input <pathname>', 'Input file path.)', resolve)
     .option('-o, --output <pathname>', 'Output file path.)', resolve)
@@ -41,12 +50,42 @@ program
 
 program.output = program.output || resolve('./out.jpg');
 
-const model = yolo.create();
-
-readImageFile(program.input)
+mkdirp(fileStore)
+.then(() => {
+    // check if onnx file exsits.
+    return access(onnxPath, fs.constants.R_OK)
+    .catch((err) => {
+        if (err.code != 'ENOENT') {
+            throw err;
+        }
+        console.log('downloading onnx file ...');
+        return download(onnxUrl)
+        .then(data => {
+            fs.writeFileSync(onnxPath, data);
+        });
+    });
+})
+.then(() => {
+    // check if config file exsits.
+    return access(jsonPath, fs.constants.R_OK)
+    .catch((err) => {
+        if (err.code != 'ENOENT') {
+            throw err;
+        }
+        console.log('downloading config file ...');
+        return download(jsonUrl)
+        .then(data => {
+            fs.writeFileSync(jsonPath, data);
+        });
+    });
+})
+.then(() => {
+    return readImageFile(program.input)
+})
 .then((buf) => {
     return jimp.read(buf)
     .then((image) => {
+        const model = yolo.create();
         model.build(onnxPath)
         .then(() => {
             const iBuf = model.inputBuffer;

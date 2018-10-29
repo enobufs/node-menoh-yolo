@@ -19,15 +19,9 @@ const colors = [
 
 const saveImageOnCanvas = util.promisify((fileName, canvas, cb) => {
     const out = fs.createWriteStream(fileName);
-    const stream = canvas.pngStream();
-
-    stream.on('data', function(chunk){
-        out.write(chunk);
-    });
-
-    stream.on('end', function(){
-        cb();
-    });
+    const stream = canvas.jpegStream();
+    stream.pipe(out);
+    out.on('finish', cb);
 });
 
 function drawBoxes(ctx, boxes) {
@@ -45,8 +39,7 @@ function drawBoxes(ctx, boxes) {
         ctx.fill()
         ctx.stroke();
 
-        ctx.strokeStyle = 'white';
-        ctx.fillStyle = 'white';
+        ctx.strokeStyle = ctx.fillStyle = 'white';
         ctx.fillText(   label,
                         box.rec.x + 10,
                         box.rec.y + 16);
