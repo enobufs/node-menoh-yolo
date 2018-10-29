@@ -1,7 +1,5 @@
 # menoh-yolo
 [![npm version](https://badge.fury.io/js/menoh-yolo.svg)](https://badge.fury.io/js/menoh-yolo)
-[![Build Status](https://travis-ci.org/enobufs/node-menoh-yolo.svg?branch=master)](https://travis-ci.org/enobufs/node-menoh-yolo)
-[![Coverage Status](https://coveralls.io/repos/github/enobufs/node-menoh-yolo/badge.svg?branch=master)](https://coveralls.io/github/enobufs/node-menoh-yolo?branch=master)
 
 Object classification using YOLO v2 powered by [Menoh](https://github.com/pfnet-research/menoh).
 
