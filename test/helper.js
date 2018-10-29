@@ -11,8 +11,8 @@ function loadDummyResult() {
 }
 
 const INPUT_IMAGE_LIST = [
-    './test/data/dog.jpg',
-    './test/data/sheep.jpg',
+    './test/fixture/dog.jpg',
+    './test/fixture/sheep.jpg',
 ];
 
 function loadInputImages() {
