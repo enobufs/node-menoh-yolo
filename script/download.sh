@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-ONNX_URL="https://github.com/Hakuyume/menoh-yolo/releases/download/assets/yolo_v2_voc0712.onnx"
-CONF_URL="https://github.com/Hakuyume/menoh-yolo/releases/download/assets/yolo_v2_voc0712.json"
+ONNX_URL="https://github.com/enobufs/node-menoh-yolo/releases/download/v0.0.1/yolo_v2_voc0712.onnx"
+CONF_URL="https://github.com/enobufs/node-menoh-yolo/releases/download/v0.0.1/yolo_v2_voc0712.json"
 
 DATA_DIR="./test/data"
 

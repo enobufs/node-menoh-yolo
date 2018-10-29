@@ -38,11 +38,12 @@
     "ndarray": "^1.0.18",
     "ndarray-unpack": "^1.0.0",
     "numjs": "^0.16.0",
-    "opn": "^5.4.0",
-    "sinon": "^7.1.0"
+    "opn": "^5.4.0"
   },
   "devDependencies": {
+    "coveralls": "^3.0.2",
     "istanbul": "^0.4.5",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "sinon": "^7.1.0"
   }
 }

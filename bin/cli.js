@@ -18,8 +18,8 @@ const jsonPath = path.join(fileStore, 'yolo_v2_voc0712.json')
 const mkdirp = util.promisify(require('mkdirp'));
 const access = util.promisify(fs.access);
 
-const onnxUrl = 'https://github.com/Hakuyume/menoh-yolo/releases/download/assets/yolo_v2_voc0712.onnx';
-const jsonUrl = 'https://github.com/Hakuyume/menoh-yolo/releases/download/assets/yolo_v2_voc0712.json';
+const onnxUrl = 'https://github.com/enobufs/node-menoh-yolo/releases/download/v0.0.1/yolo_v2_voc0712.onnx'
+const jsonUrl = 'https://github.com/enobufs/node-menoh-yolo/releases/download/v0.0.1/yolo_v2_voc0712.json'
 
 function resolve(ipath) {
     return path.resolve(process.cwd(), ipath);
