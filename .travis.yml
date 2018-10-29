@@ -1,7 +1,42 @@
+os:
+  - linux
+
 language: node_js
+
 node_js:
   - "8"
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:maarten-fonville/protobuf'
+
+notifications:
+  email: false
+
+env:
+  global:
+    - MKL_DNN_VER: "0.16"
+    - MENOH_VER: "1.1.1"
+
+before_install:
+  - |
+    sudo apt update
+    curl -LO https://github.com/pfnet-research/menoh/releases/download/v${MENOH_VER}/ubuntu1404_mkl-dnn_${MKL_DNN_VER}-1_amd64.deb
+    curl -LO https://github.com/pfnet-research/menoh/releases/download/v${MENOH_VER}/ubuntu1404_menoh_${MENOH_VER}-1_amd64.deb
+    curl -LO https://github.com/pfnet-research/menoh/releases/download/v${MENOH_VER}/ubuntu1404_menoh-dev_${MENOH_VER}-1_amd64.deb
+    sudo dpkg -i --force-depends *.deb
+    sudo apt install -f
+  - export CPATH=/usr/include:$CPATH
+  - export LIBRARY_PATH=/usr/lib:$LIBRARY_PATH
+  - export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
+
+install:
+  - npm install
+
 script:
   - npm run cover
+
 after_success: 
   - cat ./coverage/lcov.info |./node_modules/coveralls/bin/coveralls.js
