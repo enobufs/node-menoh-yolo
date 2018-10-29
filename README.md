@@ -8,6 +8,14 @@ Object classification using YOLO v2 powered by [Menoh](https://github.com/pfnet-
 This module is made on top of npm module, [menoh](https://github.com/pfnet-research/node-menoh), which is a wrapper of Menoh (C/C++) core.
 The modules supports both command line interface and API.
 
+## Requirements
+You must have the following libraries installed in advance.
+* MKL_DNN Library (0.14 or later)
+* Protocol Buffers (2.6.1 or later)
+* Menoh (core (1.1.1 or later)
+> See [Building Menoh](https://github.com/pfnet-research/menoh/blob/v1.1.1/BUILDING.md) for more
+> details.
+
 ## Installation (command line use)
 ```
 npm install -g menoh-yolo
