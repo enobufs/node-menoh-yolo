@@ -37,6 +37,7 @@ install:
   - npm install
 
 script:
+  - ./script/download.sh
   - npm run cover
 
 after_success: 
