@@ -43,7 +43,7 @@ program
     .option('-i, --input <pathname>', 'input file path', resolve)
     .option('-o, --output <pathname>', 'output file path', resolve)
     .option('-s, --score <number>', 'score threshold (0, 1.0] (defaults to 0.4)', parseFloat)
-    .option('-x, --overlap <number>', 'overlap threshold (0, 1.0] (defaults to 0.7)', parseFloat)
+    .option('-x, --overlap <number>', 'overlap threshold, known as IoU [0, 1.0] (defaults to 0.5)', parseFloat)
     .option('-b, --browse', 'open output image with default viewer')
     .option('-v, --verbose', 'print more information on TTY')
     .parse(process.argv);
