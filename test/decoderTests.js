@@ -26,14 +26,14 @@ describe('Docoder tests', function () {
         it('overlap detection - no overlap (x-axis)', function () {
             const rec1 = {x:0, y:0, w:10, h:10};
             const rec2 = {x:10, y:0, w:10, h:10};
-            const iou = Decoder.calculateIoU(rec1, rec2);
+            const iou = Decoder._calculateIoU(rec1, rec2);
             assert.strictEqual(iou, 0, 'should have no overlap');
         });
 
         it('overlap detection - no overlap (y-axis)', function () {
             const rec1 = {x:0, y:0, w:10, h:10};
             const rec2 = {x:0, y:10, w:10, h:10};
-            const iou = Decoder.calculateIoU(rec1, rec2);
+            const iou = Decoder._calculateIoU(rec1, rec2);
             assert.strictEqual(iou, 0, 'should have no overlap');
         });
 
@@ -47,7 +47,7 @@ describe('Docoder tests', function () {
                 id: 2,
                 score: 0.8
             }];
-            boxes = Decoder.sortBoxes([boxes], 0.5);
+            boxes = Decoder._sortBoxes([boxes], 0.5);
             assert.equal(boxes.length, 2);
         });
 
@@ -61,7 +61,7 @@ describe('Docoder tests', function () {
                 id: 2,
                 score: 0.8
             }];
-            boxes = Decoder.sortBoxes([boxes], 0.5);
+            boxes = Decoder._sortBoxes([boxes], 0.5);
             assert.equal(boxes.length, 1);
             assert.equal(boxes[0].id, 2);
         });
