@@ -3,6 +3,7 @@
 const yolo = require('..');
 const { loadInputImages } = require('./helper');
 const assert = require('assert');
+const sinon = require('sinon');
 const onnxPath = './test/data/yolo_v2_voc0712.onnx';
 
 describe('Yolo V2 tests', function () {
@@ -49,6 +50,11 @@ describe('Yolo V2 tests', function () {
 
     describe('Instance tests', function () {
         let model;
+        let sandbox;
+
+        before(function () {
+            sandbox = sinon.createSandbox();
+        });
 
         beforeEach(function () {
             model = yolo.create({
@@ -60,6 +66,10 @@ describe('Yolo V2 tests', function () {
             });
 
             return model.build(onnxPath);
+        });
+
+        afterEach(function () {
+            sandbox.restore();
         });
 
         it('dog', function () {
@@ -113,7 +123,7 @@ describe('Yolo V2 tests', function () {
             });
         });
 
-        it.skip('sheep', function () {
+        it('one box for two classes', function () {
             const iBuf = model.inputBuffer;
             const image = imageList[1]; // dog.jpg
             const originalShape = [image.bitmap.height, image.bitmap.width];
@@ -130,9 +140,30 @@ describe('Yolo V2 tests', function () {
                 }
             });
 
+            const spy = sandbox.spy(model._decoder, '_getBoxes');
+
             return model.run(originalShape, {
-                scoreThresh: 0.7,
-                overlapThresh: 0.7
+                scoreThresh: 0.35
+            }).then((boxes) => {
+                assert.equal(boxes.length, 2);
+                assert.equal(boxes[0].classId, 16); // sheep
+                assert.ok(boxes[0].score >= 0.7);
+                assert.equal(boxes[1].classId, 11); // dog
+                assert.ok(boxes[1].score >= 0.4);
+
+                const cboxes = spy.returnValues[0];
+
+                // cboxes[11] and cboxes[16] must share one identical box.
+                let found = false;
+                for (let i = 0; !found && i < cboxes[11].length; ++i) {
+                    for (let j = 0; !found && j < cboxes[16].length; ++j) {
+                        if (cboxes[11][i].id === cboxes[16][j].id) {
+                            assert.equal(cboxes[11][i].rec, cboxes[16][j].rec);
+                            found = true;
+                        }
+                    }
+                }
+                assert.ok(found, 'one identical box should be in class 11 & 16');
             });
         });
     });

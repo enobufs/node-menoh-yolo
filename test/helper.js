@@ -12,7 +12,7 @@ function loadDummyResult() {
 
 const INPUT_IMAGE_LIST = [
     './test/fixture/dog.jpg',
-    './test/fixture/sheep.jpg',
+    './test/fixture/bedlington_terrier.jpg',
 ];
 
 function loadInputImages() {
