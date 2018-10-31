@@ -1,10 +1,9 @@
 'use strict';
 
 const yolo = require('..');
-const { INPUT_IMAGE_LIST, loadInputImages } = require('./helper');
+const { loadInputImages } = require('./helper');
 const assert = require('assert');
 const onnxPath = './test/data/yolo_v2_voc0712.onnx';
-const { Rectangle } = require('../lib/tool');
 
 describe('Yolo V2 tests', function () {
     let config;
@@ -15,9 +14,9 @@ describe('Yolo V2 tests', function () {
         config = require('./data/yolo_v2_voc0712.json');
 
         return loadInputImages()
-        .then((images) => {
-            imageList = images;
-        });
+            .then((images) => {
+                imageList = images;
+            });
     });
 
     //after(function () {});
@@ -83,8 +82,7 @@ describe('Yolo V2 tests', function () {
 
             return model.run(originalShape, {
                 scoreThresh: 0.7
-            })
-            .then((boxes) => {
+            }).then((boxes) => {
                 assert.equal(boxes.length, 3);
                 assert.equal(boxes[0].classId, 11);
                 assert.equal(boxes[1].classId, 1);
@@ -94,7 +92,7 @@ describe('Yolo V2 tests', function () {
                     {x:86, y:113, w:474, h:279},
                     {x:471, y:73, w:222, h:102}
                 ];
-                const expScores = [ 0.81, 0.80, 0.73 ]
+                const expScores = [ 0.81, 0.80, 0.73 ];
                 boxes.forEach((box, i) => {
                     assert.ok(box.score >= expScores[i], 'score is too low');
                     assert.deepEqual(box.rec, expRecs[i]);

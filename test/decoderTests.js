@@ -3,7 +3,6 @@
 const Decoder = require('../lib/decoder');
 const assert = require('assert');
 const helper = require('./helper');
-const { Rectangle, overlapRectangle } = require('../lib/tool');
 const ndarray = require('ndarray');
 const sinon = require('sinon');
 
@@ -12,7 +11,6 @@ describe('Docoder tests', function () {
     let config;
     let dec;
     let sandbox;
-    
 
     before(function () {
         // The path for require must be relative to this file.
@@ -48,7 +46,7 @@ describe('Docoder tests', function () {
                 rec: {x:10, y:0, w:0, h:10},
                 id: 2,
                 score: 0.8
-            }]
+            }];
             boxes = Decoder.sortBoxes([boxes], 0.5);
             assert.equal(boxes.length, 2);
         });
@@ -62,7 +60,7 @@ describe('Docoder tests', function () {
                 rec: {x:0, y:0, w:10, h:10},
                 id: 2,
                 score: 0.8
-            }]
+            }];
             boxes = Decoder.sortBoxes([boxes], 0.5);
             assert.equal(boxes.length, 1);
             assert.equal(boxes[0].id, 2);
@@ -82,7 +80,7 @@ describe('Docoder tests', function () {
 
         it('decode default option', function () {
             const spy = sandbox.spy(dec, '_getBoxes');
-            const dummy = ndarray(new Float32Array(13*13*125), [13, 13, 125]);
+            const dummy = ndarray(new Float32Array(13 * 13 * 125), [13, 13, 125]);
             dec.decode(dummy, [576, 768]);
             assert.strictEqual(spy.args[0][1], 0.4);
         });
@@ -93,7 +91,7 @@ describe('Docoder tests', function () {
                 scoreThresh: 0.7,
                 overlapThresh: 0.7
             };
-            const boxes = dec.decode(result, orgShape, option)
+            const boxes = dec.decode(result, orgShape, option);
             //console.log('Final:\n', boxes);
 
             assert.equal(boxes.length, 3);
@@ -105,7 +103,7 @@ describe('Docoder tests', function () {
                 {x:86, y:113, w:474, h:279},
                 {x:471, y:73, w:222, h:102}
             ];
-            const expScores = [ 0.81, 0.80, 0.73 ]
+            const expScores = [ 0.81, 0.80, 0.73 ];
             boxes.forEach((box, i) => {
                 assert.ok(box.score >= expScores[i], 'score is too low');
                 assert.deepEqual(box.rec, expRecs[i]);
