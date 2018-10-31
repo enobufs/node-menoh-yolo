@@ -25,6 +25,7 @@ const saveImageOnCanvas = util.promisify((fileName, canvas, cb) => {
 });
 
 function drawBoxes(ctx, boxes) {
+    boxes.reverse(); // to draw boxes with lower score
     boxes.forEach((box, i) => {
         // draw a label box
         const label = box.label + `: ${box.score.toFixed(6)}`;

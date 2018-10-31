@@ -32,7 +32,7 @@ Options:
   -i, --input <pathname>   Input file path.
   -o, --output <pathname>  Output file path.
   -s, --score <number>     Score threshold (0, 1.0] (defaults to 0.4)
-  -x, --overlap <number>   Overlap threshold (0, 1.0] (defaults to 0.7)
+  -x, --overlap <number>   Overlap threshold (0, 1.0] (defaults to 0.5)
   -b, --browse             Show output image with default viewer.
   -h, --help               Output usage information
 ```
