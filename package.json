@@ -1,6 +1,6 @@
 {
   "name": "menoh-yolo",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Object classification using Yolo powered by Menoh.",
   "main": "index.js",
   "bin": {
