@@ -9,7 +9,7 @@
   "scripts": {
     "pretest": "./script/download.sh",
     "test": "mocha",
-    "cover": "npm run lint; istanbul cover _mocha",
+    "cover": "npm run lint; nyc npm run test",
     "lint": "eslint lib test"
   },
   "repository": {
@@ -43,8 +43,8 @@
   "devDependencies": {
     "coveralls": "^3.0.2",
     "eslint": "^5.8.0",
-    "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
+    "nyc": "^14.1.1",
     "sinon": "^7.1.0"
   },
   "eslintConfig": {
